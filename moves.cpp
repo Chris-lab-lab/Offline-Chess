@@ -13,12 +13,11 @@ std::vector<Move> getMoves(int row, int col, const std::string &piece, std::stri
     char type = piece[1];
     switch (type){
         case 'p' : return getPawnMoves(row, col, piece, board);
-/*        case 'n' : return getKnightMoves(row, col, board[row][col], board);
+        case 'n' : return getKnightMoves(row, col, piece, board);
         case 'b' : return getBishopMoves(row, col, board[row][col], board);
         case 'r' : return getRookMoves(row, col, board[row][col], board);
         case 'k' : return getKingMoves(row, col, board[row][col], board);
         case 'q' : return getQueenMoves(row, col, board[row][col], board);
-*/
     }
     return {};
 }

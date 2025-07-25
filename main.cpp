@@ -67,7 +67,6 @@ int main () {
                         availableMoves = getMoves(row, col, piece, board);
                         selectedRow = row;
                         selectedCol = col;
-                        DrawRectangle(selectedCol, selectedRow, squareSize, squareSize, Fade(GREEN, 0.4f));
                     }
                 }
                 else{
@@ -93,6 +92,7 @@ int main () {
             }
         }
 
+        
         for(int row = 0; row < rows; row++){
             for(int col = 0; col < cols; col++){
                 Color light = { 240, 217, 181, 255 };
