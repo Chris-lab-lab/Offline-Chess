@@ -1,4 +1,5 @@
 #include "pawn.h"
+#include "check.h"
 
 std::vector<Move> getPawnMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]){
     std::vector<Move> moves;
@@ -8,12 +9,12 @@ std::vector<Move> getPawnMoves(int row, int col, const std::string &piece, std::
 
     int nextRow = row + direction;
     if(nextRow >= 0 && nextRow < 8 && board[nextRow][col].empty()){
-        moves.push_back({nextRow, col});
+        if(isMoveLegal(row, col, nextRow, col, board, isWhite)) moves.push_back({nextRow, col});
 
         int startRow = isWhite ? 6 : 1;
         int doubleRow = row + 2 * direction;
         if(row == startRow && board[doubleRow][col].empty()){
-            moves.push_back({doubleRow, col});
+            if(isMoveLegal(row, col, doubleRow, col, board, isWhite)) moves.push_back({doubleRow, col});
         }
     }
 
@@ -23,7 +24,7 @@ std::vector<Move> getPawnMoves(int row, int col, const std::string &piece, std::
         if(c >= 0 && c < 8){
             std::string target = board[nextRow][c];
             if(!target.empty() && target[0] != piece[0]){
-                moves.push_back({nextRow, c});
+                if(isMoveLegal(row, col, nextRow, c, board, isWhite)) moves.push_back({nextRow, c});
             }
         }
     }

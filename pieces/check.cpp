@@ -98,3 +98,35 @@ bool isSquareSafe(int row, int col, const std::string (&board)[8][8], bool isWhi
     return true;
 }
 
+bool isKingInCheck(const std::string (&board)[8][8], bool isWhite){
+    std::string kingCode = isWhite ? "wk" : "bk";
+    int kingRow = -1, kingCol = -1;
+
+    // LF king
+    for(int r = 0; r < 8; r++){
+        for(int c = 0; c < 8; c++){
+            if(board[r][c] == kingCode){
+                kingRow = r;
+                kingCol = c;
+                break;
+            }
+        }
+    }
+    return !isSquareSafe(kingRow, kingCol, board, isWhite);
+}
+
+bool isMoveLegal(int fromRow, int fromCol, int toRow, int toCol, const std::string (&board)[8][8], bool isWhite){
+    std::string tempBoard[8][8];
+    for(int r = 0; r < 8; r++){
+        for(int c = 0; c < 8; c++){
+            tempBoard[r][c] = board[r][c];
+        }
+    }
+
+    tempBoard[toRow][toCol] = tempBoard[fromRow][fromCol];
+    tempBoard[fromRow][fromCol] = "";
+
+    if(isKingInCheck(tempBoard, isWhite)) return false;
+    return true;
+
+}

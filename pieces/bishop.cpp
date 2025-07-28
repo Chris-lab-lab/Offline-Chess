@@ -1,7 +1,11 @@
 #include "bishop.h"
+#include "check.h"
 
 std::vector<Move> getBishopMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]){
     std::vector<Move> moves;
+    
+    bool isWhite = (piece[0] == 'w');
+
     int directions[4][2] = {
         {-1, -1}, {-1, 1}, {1, 1}, {1, -1}
     };
@@ -16,11 +20,14 @@ std::vector<Move> getBishopMoves(int row, int col, const std::string &piece, std
             std::string target = board[r][c];
 
             if(target.empty()){
-                moves.push_back({r, c});
+                if(isMoveLegal(row, col, r, c, board, isWhite)){
+                    moves.push_back({r, c});
+                }
+                
             }
             else{ // available moves won't pierced through enemy piece
                 if(target[0] != piece[0]){
-                    moves.push_back({r, c});
+                    if(isMoveLegal(row, col, r, c, board, isWhite)) moves.push_back({r, c});
                 }
                 break; // met friendly piece
             }

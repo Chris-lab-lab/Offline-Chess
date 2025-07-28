@@ -1,7 +1,11 @@
 #include "queen.h"
+#include "check.h"
 
 std::vector<Move> getQueenMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]){
     std::vector<Move> moves;
+
+    bool isWhite = (piece[0] == 'w');
+
     int directions[8][2] = {
         {-1, 0}, {1, 0}, {0, -1}, {0, 1}, // rook movement logic
         {-1, -1}, {-1, 1}, {1, 1}, {1, -1} // bishop movement logic
@@ -14,11 +18,11 @@ std::vector<Move> getQueenMoves(int row, int col, const std::string &piece, std:
         while(r >= 0 && r < 8 && c >= 0 && c < 8){
             std::string target = board[r][c];
             if(target.empty()){
-                moves.push_back({r, c});
+                if(isMoveLegal(row, col, r, c, board, isWhite)) moves.push_back({r, c});
             }
             else{
                 if(target[0] != piece[0]){
-                    moves.push_back({r, c});
+                    if(isMoveLegal(row, col, r, c, board, isWhite)) moves.push_back({r, c});
                 }
                 break;
             }

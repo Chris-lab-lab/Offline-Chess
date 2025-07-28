@@ -1,7 +1,11 @@
 #include "knight.h"
+#include "check.h"
 
 std::vector<Move> getKnightMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]){
     std::vector<Move> moves;
+
+    bool isWhite = (piece[0] == 'w');
+
     int knightMoves[8][2] = {
         {-2, -1}, {-2, 1}, {-1, -2}, {-1, 2},
         {1, -2}, {1, 2}, {2, -1}, {2, 1}
@@ -15,7 +19,7 @@ std::vector<Move> getKnightMoves(int row, int col, const std::string &piece, std
 
             // movement and capture
             if(target.empty() || target[0] != piece[0]){
-                moves.push_back({r, c});
+                if(isMoveLegal(row, col, r, c, board, isWhite)) moves.push_back({r, c});
             }
         }
     }
