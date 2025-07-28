@@ -3,7 +3,7 @@
 std::vector<Move> getBishopMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]){
     std::vector<Move> moves;
     int directions[4][2] = {
-        {-1, -1}, {-1, 1}, {1, 1}, {1, -1},
+        {-1, -1}, {-1, 1}, {1, 1}, {1, -1}
     };
 
     for(int i = 0; i < 4; i++){

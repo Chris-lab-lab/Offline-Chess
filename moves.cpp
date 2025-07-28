@@ -5,8 +5,10 @@
 #include "pieces/rook.h"
 #include "pieces/queen.h"
 #include "pieces/king.h"
+#include "pieces/check.h"
 #include <string>
 #include <vector>
+#include <algorithm>
 
 std::vector<Move> getMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]){
     if (piece.empty()) return {};
