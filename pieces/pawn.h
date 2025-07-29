@@ -5,6 +5,6 @@
 #include <string>
 #include "../moves.h"
 
-std::vector<Move> getPawnMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]);
+std::vector<Move> getPawnMoves(int row, int col, const std::string &piece, std::string (&board)[8][8], int enPassantRow, int enPassantCol);
 
 #endif

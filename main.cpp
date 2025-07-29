@@ -18,6 +18,9 @@ int main () {
     int selectedRow = -1;
     int selectedCol = -1;
 
+    int enPassantRow = -1;
+    int enPassantCol = -1;
+
     InitWindow(screenWIDTH, screenHEIGHT, "Chess");
     SetTargetFPS(60);
 
@@ -64,17 +67,41 @@ int main () {
                 if(selectedRow == -1 && selectedCol == -1){
                     string piece = board[row][col];
                     if(!piece.empty()){
-                        availableMoves = getMoves(row, col, piece, board);
+                        availableMoves = getMoves(row, col, piece, board, enPassantRow, enPassantCol);
                         selectedRow = row;
                         selectedCol = col;
                     }
                 }
                 else{
                     bool moveMade = false;
-                    for(const Move &m : availableMoves){
+                    for(const auto &m : availableMoves){
                         if(m.row == row && m.col == col){
                             board[row][col] = board[selectedRow][selectedCol];
                             board[selectedRow][selectedCol] = "";
+
+                            if(board[row][col][1] == 'p'){
+                                if(row == enPassantRow && col == enPassantCol){
+                                    if(board[row][col][0] == 'w'){
+                                        board[row + 1][col] = "";
+                                    }
+                                    else if(board[row][col][0] == 'b'){
+                                        board[row - 1][col] = "";
+                                    }
+                                }
+                            }
+
+                            // En Passant
+                            if(board[row][col][1] == 'p'){
+                                if(board[row][col][0] == 'w' && selectedRow == 6 && row == 4){
+                                    enPassantRow = 5;
+                                    enPassantCol = col;
+                                }
+                                if(board[row][col][0] == 'b' && selectedRow == 1 && row == 3){
+                                    enPassantRow = 2;
+                                    enPassantCol = col;
+                                }
+                            }
+                            
                             moveMade = true;
                             break;
                         }

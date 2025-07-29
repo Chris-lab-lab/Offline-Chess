@@ -9,6 +9,6 @@ struct Move{
     int col;
 };
 
-std::vector<Move> getMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]);
+std::vector<Move> getMoves(int row, int col, const std::string &piece, std::string (&board)[8][8], int enPassantRow, int enPassantCol);
 
 #endif
