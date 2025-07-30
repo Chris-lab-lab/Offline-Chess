@@ -21,6 +21,13 @@ int main () {
     int enPassantRow = -1;
     int enPassantCol = -1;
 
+    bool whiteKingMoved = false;
+    bool whiteRookLeftMoved = false;
+    bool whiteRookRightMoved = false;
+    bool blackKingMoved = false;
+    bool blackRookLeftMoved = false;
+    bool blackRookRightMoved = false;
+
     InitWindow(screenWIDTH, screenHEIGHT, "Chess");
     SetTargetFPS(60);
 
@@ -76,37 +83,74 @@ int main () {
                     bool moveMade = false;
                     for(const auto &m : availableMoves){
                         if(m.row == row && m.col == col){
-                            board[row][col] = board[selectedRow][selectedCol];
+                            string movingPiece = board[selectedRow][selectedCol];
+                            board[row][col] = movingPiece;
                             board[selectedRow][selectedCol] = "";
 
-                            if(board[row][col][1] == 'p'){
+                            if(movingPiece[1] == 'p'){
                                 if(row == enPassantRow && col == enPassantCol){
-                                    if(board[row][col][0] == 'w'){
+                                    if(movingPiece[0] == 'w'){
                                         board[row + 1][col] = "";
                                     }
-                                    else if(board[row][col][0] == 'b'){
+                                    else if(movingPiece[0] == 'b'){
                                         board[row - 1][col] = "";
                                     }
                                 }
                             }
 
                             // En Passant
-                            if(board[row][col][1] == 'p'){
-                                if(board[row][col][0] == 'w' && selectedRow == 6 && row == 4){
+                            if(movingPiece[1] == 'p'){
+                                if(movingPiece[0] == 'w' && selectedRow == 6 && row == 4){
                                     enPassantRow = 5;
                                     enPassantCol = col;
                                 }
-                                if(board[row][col][0] == 'b' && selectedRow == 1 && row == 3){
+                                if(movingPiece[0] == 'b' && selectedRow == 1 && row == 3){
                                     enPassantRow = 2;
                                     enPassantCol = col;
                                 }
                             }
+
+                            // Castling
+                            if(movingPiece == "wk" && abs(col - selectedCol) == 2){
+                                if(col == 6){
+                                    board[7][5] = board[7][7];
+                                    board[7][7] = "";
+                                }
+                                else if(col == 2){
+                                    board[7][3] = board[7][0];
+                                    board[7][0] = "";
+                                }
+                            }
+                            else if(movingPiece == "bk" && abs(col - selectedCol) == 2){
+                                if(col == 6){
+                                    board[0][5] = board[0][7];
+                                    board[0][7] = "";
+                                }
+                                else if(col == 2){
+                                    board[0][3] = board[0][0];
+                                    board[0][0] = "";
+                                }
+                            }
+
+                            if(movingPiece == "wk") whiteKingMoved = true;
+                            if(movingPiece == "bk") blackKingMoved = true;
+                            if(movingPiece == "wr" && selectedRow == 7 && selectedCol == 0) whiteRookLeftMoved = true;
+                            if(movingPiece == "wr" && selectedRow == 7 && selectedCol == 7) whiteRookRightMoved = true;
+                            if(movingPiece == "br" && selectedRow == 0 && selectedCol == 0) blackRookLeftMoved = true;
+                            if(movingPiece == "br" && selectedRow == 0 && selectedCol == 7) blackRookRightMoved = true;
                             
                             moveMade = true;
                             break;
                         }
                     }
                     availableMoves.clear();
+
+                    // Clear en passant if it is not moved
+                    if(!(board[row][col][1] == 'p' && ((board[row][col][0] == 'w' && selectedRow == 6 && row == 4) || (board[row][col][0] == 'b' && selectedRow == 1 && row == 3)))){
+                        enPassantRow = -1;
+                        enPassantCol = -1;
+                    }
+
                     if(moveMade){
                         selectedRow = -1;
                         selectedCol = -1;
