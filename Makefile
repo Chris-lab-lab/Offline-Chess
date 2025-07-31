@@ -196,6 +196,12 @@ endif
 #  -D_DEFAULT_SOURCE    use with -std=c99 on Linux and PLATFORM_WEB, required for timespec
 CFLAGS += -Wall -std=c++14 -D_DEFAULT_SOURCE -Wno-missing-braces
 
+ifeq ($(PLATFORM),PLATFORM_DESKTOP)
+    ifeq ($(PLATFORM_OS),WINDOWS)
+        CFLAGS += -DRAYLIB_WIN32
+    endif
+endif
+
 ifeq ($(BUILD_MODE),DEBUG)
     CFLAGS += -g -O0
 else
@@ -370,7 +376,7 @@ OBJ_DIR = obj
 # Define all object files from source files
 SRC = $(call rwildcard, *.c, *.h)
 #OBJS = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJS ?= $(wildcard *.cpp pieces/*.cpp)
+OBJS ?= $(wildcard src/*.cpp src/pieces/*.cpp)
 
 # For Android platform we call a custom Makefile.Android
 ifeq ($(PLATFORM),PLATFORM_ANDROID)

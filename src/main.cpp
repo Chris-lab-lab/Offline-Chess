@@ -4,8 +4,17 @@
 #include <string>
 #include <vector>
 #include "moves.h"
+#include "pieces/check.h"
 
 using namespace std;
+
+bool whiteKingMoved = false;
+bool whiteRookLeftMoved = false;
+bool whiteRookRightMoved = false;
+bool blackKingMoved = false;
+bool blackRookLeftMoved = false;
+bool blackRookRightMoved = false;
+bool whiteTurn = true;
 
 int main () {
     const int screenWIDTH = 600;
@@ -20,13 +29,6 @@ int main () {
 
     int enPassantRow = -1;
     int enPassantCol = -1;
-
-    bool whiteKingMoved = false;
-    bool whiteRookLeftMoved = false;
-    bool whiteRookRightMoved = false;
-    bool blackKingMoved = false;
-    bool blackRookLeftMoved = false;
-    bool blackRookRightMoved = false;
 
     InitWindow(screenWIDTH, screenHEIGHT, "Chess");
     SetTargetFPS(60);
@@ -45,22 +47,36 @@ int main () {
 
     // Load texture
     map<string, Texture2D> pieceTextures;
-    pieceTextures["wp"] = LoadTexture("images/wp.png");
-    pieceTextures["wr"] = LoadTexture("images/wr.png");
-    pieceTextures["wn"] = LoadTexture("images/wn.png");
-    pieceTextures["wb"] = LoadTexture("images/wb.png");
-    pieceTextures["wq"] = LoadTexture("images/wq.png");
-    pieceTextures["wk"] = LoadTexture("images/wk.png");
+    pieceTextures["wp"] = LoadTexture("assets/images/wp.png");
+    pieceTextures["wr"] = LoadTexture("assets/images/wr.png");
+    pieceTextures["wn"] = LoadTexture("assets/images/wn.png");
+    pieceTextures["wb"] = LoadTexture("assets/images/wb.png");
+    pieceTextures["wq"] = LoadTexture("assets/images/wq.png");
+    pieceTextures["wk"] = LoadTexture("assets/images/wk.png");
 
-    pieceTextures["bp"] = LoadTexture("images/bp.png");
-    pieceTextures["br"] = LoadTexture("images/br.png");
-    pieceTextures["bn"] = LoadTexture("images/bn.png");
-    pieceTextures["bb"] = LoadTexture("images/bb.png");
-    pieceTextures["bq"] = LoadTexture("images/bq.png");
-    pieceTextures["bk"] = LoadTexture("images/bk.png");
+    pieceTextures["bp"] = LoadTexture("assets/images/bp.png");
+    pieceTextures["br"] = LoadTexture("assets/images/br.png");
+    pieceTextures["bn"] = LoadTexture("assets/images/bn.png");
+    pieceTextures["bb"] = LoadTexture("assets/images/bb.png");
+    pieceTextures["bq"] = LoadTexture("assets/images/bq.png");
+    pieceTextures["bk"] = LoadTexture("assets/images/bk.png");
 
     // Draw the board
     while(!WindowShouldClose()){
+
+        bool inCheck = isKingInCheck(board, whiteTurn);
+        int kingRow = -1;
+        int kingCol = -1;
+        string kingCode = whiteTurn ? "wk" : "bk";
+        for(int r = 0; r < 8; r++){
+            for(int c = 0; c < 8; c++){
+                if(board[r][c] == kingCode){
+                    kingRow = r;
+                    kingCol = c;
+                }
+            }
+        }
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -73,11 +89,13 @@ int main () {
             if(row >= 0 && row < 8 && col >= 0 && col < 8){
                 if(selectedRow == -1 && selectedCol == -1){
                     string piece = board[row][col];
-                    if(!piece.empty()){
-                        availableMoves = getMoves(row, col, piece, board, enPassantRow, enPassantCol);
-                        selectedRow = row;
-                        selectedCol = col;
-                    }
+                        if(!piece.empty()){
+                            if((whiteTurn && piece[0] == 'w') || (!whiteTurn && piece[0] == 'b')){
+                                availableMoves = getMoves(row, col, piece, board, enPassantRow, enPassantCol);
+                                selectedRow = row;
+                                selectedCol = col;
+                            }
+                        }
                 }
                 else{
                     bool moveMade = false;
@@ -110,6 +128,13 @@ int main () {
                                 }
                             }
 
+                            // Promotion
+                            if(movingPiece[1] == 'p'){
+                                if((movingPiece[0] == 'w' && row == 0) || (movingPiece[0] == 'b' && row == 7)){
+                                    board[row][col] = movingPiece[0] == 'w' ? "wq" : "bq";
+                                }
+                            }
+                            
                             // Castling
                             if(movingPiece == "wk" && abs(col - selectedCol) == 2){
                                 if(col == 6){
@@ -152,6 +177,7 @@ int main () {
                     }
 
                     if(moveMade){
+                        whiteTurn = !whiteTurn;
                         selectedRow = -1;
                         selectedCol = -1;
                     }
@@ -168,8 +194,13 @@ int main () {
             for(int col = 0; col < cols; col++){
                 Color light = { 240, 217, 181, 255 };
                 Color dark  = { 181, 136, 99, 255 };
-                Color squareColor = ((row + col) % 2) ? light : dark;
+                Color squareColor = ((row + col) % 2) ? dark : light;
+
                 DrawRectangle(col * squareSize, row * squareSize, squareSize, squareSize, squareColor);
+
+                if(inCheck && row == kingRow && col == kingCol){
+                    DrawRectangle(col * squareSize, row * squareSize, squareSize, squareSize, Fade(RED, 0.5f));
+                }
 
                 string pieceCode = board[row][col];
                 if(pieceCode != ""){
@@ -186,6 +217,10 @@ int main () {
                 }
             }
         }
+        for(const auto &m : availableMoves){
+            DrawRectangle(m.col * squareSize, m.row * squareSize, squareSize, squareSize, Fade(GREEN, 0.5f));
+        }
+        DrawText(whiteTurn ? "White's Turn" : "Black's Turn", 10, 10, 20, BLACK);
 
         EndDrawing();
     }

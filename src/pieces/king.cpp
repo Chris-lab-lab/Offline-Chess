@@ -1,13 +1,6 @@
 #include "king.h"
 #include "check.h"
 
-    bool whiteKingMoved = false;
-    bool whiteRookLeftMoved = false;
-    bool whiteRookRightMoved = false;
-    bool blackKingMoved = false;
-    bool blackRookLeftMoved = false;
-    bool blackRookRightMoved = false;
-
 std::vector<Move> getKingMoves(int row, int col, const std::string &piece, std::string (&board)[8][8]){
     std::vector<Move> moves;
     int directions[8][2] = {
